@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页 - 视频创作助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F2F2F7;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .top-nav {
+            position: sticky;
+            top: 0;
+            display: flex;
+            background-color: white;
+            padding: 12px 16px;
+            z-index: 100;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        .category-tabs {
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            gap: 16px;
+            padding: 0 16px;
+        }
+        
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tab {
+            white-space: nowrap;
+            font-size: 15px;
+            font-weight: 500;
+            color: #8E8E93;
+            position: relative;
+            padding-bottom: 8px;
+        }
+        
+        .tab.active {
+            color: #000;
+            font-weight: 600;
+        }
+        
+        .tab.active::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 3px;
+            background-color: #FF427F;
+            border-radius: 2px;
+        }
+        
+        .search-icon {
+            margin-left: auto;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #F2F2F7;
+            border-radius: 50%;
+        }
+        
+        .video-feed {
+            padding: 2px 0 0;
+        }
+        
+        .video-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 12px 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            background-color: #000;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .video-duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 66, 127, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            opacity: 0.9;
+        }
+        
+        .video-info {
+            padding: 12px;
+        }
+        
+        .video-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .creator-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .creator-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .creator-name {
+            font-size: 14px;
+            color: #8E8E93;
+        }
+        
+        .video-stats {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #8E8E93;
+        }
+        
+        .stat {
+            display: flex;
+            align-items: center;
+        }
+        
+        .stat i {
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <div class="category-tabs">
+            <div class="tab active">推荐</div>
+            <div class="tab">关注</div>
+            <div class="tab">热门</div>
+            <div class="tab">剪辑技巧</div>
+            <div class="tab">创意灵感</div>
+            <div class="tab">拍摄教程</div>
+            <div class="tab">特效制作</div>
+            <div class="tab">配乐分享</div>
+        </div>
+        <div class="search-icon">
+            <i class="fas fa-search"></i>
+        </div>
+    </div>
+    
+    <div class="video-feed">
+        <!-- 视频卡片1 -->
+        <div class="video-card">
+            <div class="video-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
+                <div class="video-duration">3:24</div>
+                <div class="play-icon">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="video-info">
+                <div class="video-title">手机摄影技巧：如何拍出电影感大片</div>
+                <div class="creator-info">
+                    <div class="creator-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                    <div class="creator-name">摄影达人</div>
+                </div>
+                <div class="video-stats">
+                    <div class="stat">
+                        <i class="fas fa-play"></i>
+                        <span>12.5万</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-heart"></i>
+                        <span>5684</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-comment"></i>
+                        <span>341</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 视频卡片2 -->
+        <div class="video-card">
+            <div class="video-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1334&q=80');">
+                <div class="video-duration">5:42</div>
+                <div class="play-icon">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="video-info">
+                <div class="video-title">三分钟学会酷炫转场特效，新手必学</div>
+                <div class="creator-info">
+                    <div class="creator-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/44.jpg');"></div>
+                    <div class="creator-name">特效女王</div>
+                </div>
+                <div class="video-stats">
+                    <div class="stat">
+                        <i class="fas fa-play"></i>
+                        <span>8.7万</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-heart"></i>
+                        <span>4321</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-comment"></i>
+                        <span>278</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 视频卡片3 -->
+        <div class="video-card">
+            <div class="video-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1576097492152-2779e8e1c781?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
+                <div class="video-duration">8:16</div>
+                <div class="play-icon">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="video-info">
+                <div class="video-title">AI剪辑神器：一键生成精彩视频内容</div>
+                <div class="creator-info">
+                    <div class="creator-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/85.jpg');"></div>
+                    <div class="creator-name">科技探索家</div>
+                </div>
+                <div class="video-stats">
+                    <div class="stat">
+                        <i class="fas fa-play"></i>
+                        <span>23.8万</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-heart"></i>
+                        <span>9827</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-comment"></i>
+                        <span>635</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 选项卡切换效果
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+        
+        // 视频卡片点击跳转
+        const videoCards = document.querySelectorAll('.video-card');
+        videoCards.forEach(card => {
+            card.addEventListener('click', () => {
+                window.parent.location.href = window.parent.location.href.replace('home.html', 'video-detail.html');
+            });
+        });
+    </script>
+</body>
+</html>

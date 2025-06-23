@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频创作助手</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f8f8;
+            max-width: 390px;
+            margin: 0 auto;
+            height: 844px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 40px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .status-bar {
+            background-color: #000;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #ff4d4d, #f9333f);
+            border: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn-primary:active {
+            background: linear-gradient(to right, #e64646, #e02e39);
+        }
+        
+        .btn-active {
+            opacity: 0.9;
+        }
+        
+        .app-container {
+            background-color: white;
+            height: calc(100% - 120px);
+            overflow-y: auto;
+        }
+        .mode-option {
+            transition: all 0.2s ease;
+        }
+        .mode-option:hover {
+            transform: translateY(-2px);
+        }
+        .mode-option.active p {
+            font-weight: 500;
+        }
+        .fixed-button {
+            position: fixed;
+            bottom: 120px;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: calc(100% - 1.5rem * 2);
+            max-width: none;
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(249, 51, 63, 0.2), 0 2px 8px rgba(249, 51, 63, 0.15);
+            transition: all 0.25s ease;
+            border-radius: 12px;
+            padding: 14px 0;
+            transform: translateY(0);
+        }
+        
+        .fixed-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(249, 51, 63, 0.25), 0 5px 10px rgba(249, 51, 63, 0.15);
+        }
+        
+        .fixed-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 8px 15px rgba(249, 51, 63, 0.2), 0 2px 5px rgba(249, 51, 63, 0.1);
+            opacity: 0.9;
+        }
+        .nav-footer {
+            padding: 12px 0;
+            background-color: white;
+            border-top: 1px solid #e2e8f0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 390px;
+            margin: 0 auto;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+        }
+        .nav-item.active i {
+            color: #f9333f;
+        }
+        .nav-item.active span {
+            color: #f9333f;
+        }
+        
+        .alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            max-width: 80%;
+            text-align: center;
+            animation: fadeInOut 2s ease-in-out forwards;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .app-container {
+            padding-bottom: 120px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="left">
+            <span id="current-time">22:09</span>
+        </div>
+        <div class="right">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi ml-2"></i>
+            <i class="fas fa-battery-full ml-2"></i>
+        </div>
+    </div>
+    
+    <!-- 应用导航栏 -->
+    <div class="bg-gradient-to-r from-red-500 to-pink-500 p-4 flex items-center justify-between shadow-md rounded-b-lg">
+        <div class="flex items-center">
+            <i class="fas fa-video text-white mr-2 text-xl"></i>
+            <div class="text-xl font-bold text-white">视频创作助手</div>
+        </div>
+        <div></div>
+    </div>
+    
+    <!-- 主要内容区域 -->
+    <div class="app-container p-3 pb-20">
+        <!-- 精简顶部信息 -->
+        <div class="bg-blue-50 rounded-lg p-3 mb-3 border border-blue-100">
+            <h2 class="text-lg font-medium text-center text-gray-800 mb-1">一键生成宣传视频</h2>
+            <p class="text-sm text-blue-700 text-center"><i class="fas fa-info-circle mr-1"></i> 智能创作营销内容，提升转化率</p>
+        </div>
+        
+        <!-- 平台选择 -->
+        <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100 mb-3">
+            <p class="text-sm font-medium text-gray-700 mb-2">选择发布平台：</p>
+            <div class="flex space-x-2">
+                <div id="platform-douyin" class="flex-1 py-3 px-2 rounded-lg border border-red-500 bg-red-50 text-center cursor-pointer mode-option active">
+                    <i class="fab fa-tiktok text-red-500 mb-1"></i>
+                    <p class="text-sm font-medium text-red-600">抖音视频</p>
+                </div>
+                <div id="platform-wechat" class="flex-1 py-3 px-2 rounded-lg border border-gray-200 bg-gray-50 text-center cursor-pointer mode-option">
+                    <i class="fab fa-weixin text-gray-500 mb-1"></i>
+                    <p class="text-sm font-medium text-gray-600">微信视频号</p>
+                </div>
+                <div id="platform-xiaohongshu" class="flex-1 py-3 px-2 rounded-lg border border-gray-200 bg-gray-50 text-center cursor-pointer mode-option">
+                    <i class="fas fa-bookmark text-gray-500 mb-1"></i>
+                    <p class="text-sm font-medium text-gray-600">小红书</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 模式选择 -->
+        <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100 mb-3">
+            <p class="text-sm font-medium text-gray-700 mb-2">选择创作模式：</p>
+            <div class="space-y-3">
+                <div id="mode-create" class="py-3 px-4 rounded-lg border border-red-500 bg-red-50 cursor-pointer mode-option active flex items-center">
+                    <div class="mr-3 text-center w-8">
+                        <i class="fas fa-pen-to-square text-red-500 text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-red-600">原创营销获客</p>
+                        <p class="text-xs text-red-400 mt-1">原创内容，定制化视频营销</p>
+                    </div>
+                </div>
+                <div id="mode-rewrite" class="py-3 px-4 rounded-lg border border-gray-200 bg-gray-50 cursor-pointer mode-option flex items-center">
+                    <div class="mr-3 text-center w-8">
+                        <i class="fas fa-link text-gray-500 text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">热门营销获客</p>
+                        <p class="text-xs text-gray-400 mt-1">基于热门内容改编视频</p>
+                    </div>
+                </div>
+                <div id="mode-digital" class="py-3 px-4 rounded-lg border border-gray-200 bg-gray-50 cursor-pointer mode-option flex items-center">
+                    <div class="mr-3 text-center w-8">
+                        <i class="fas fa-user-tie text-gray-500 text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">数字人获客</p>
+                        <p class="text-xs text-gray-400 mt-1">使用数字人进行产品展示</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 提示信息 -->
+        <div class="text-center text-sm text-gray-500 mt-4">
+            <p>点击选择创作模式后自动进入下一步</p>
+        </div>
+    </div>
+    
+    <!-- 底部导航 -->
+    <div class="nav-footer" style="display: flex; justify-content: space-around;">
+        <div class="nav-item active" style="text-align: center; width: 50%;">
+            <a href="landing.html" class="block">
+                <i class="fas fa-home text-xl text-red-500"></i><br>
+                <span class="text-xs text-red-500">首页</span>
+            </a>
+        </div>
+        <div class="nav-item" style="text-align: center; width: 50%;">
+            <a href="data-center.html" class="block">
+                <i class="fas fa-chart-bar text-xl text-gray-400"></i><br>
+                <span class="text-xs text-gray-400">数据</span>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // 显示当前时间
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('current-time').textContent = `${hours}:${minutes}`;
+        }
+        
+        updateTime();
+        setInterval(updateTime, 60000);
+        
+        // 平台选择
+        const platformDouyin = document.getElementById('platform-douyin');
+        const platformWechat = document.getElementById('platform-wechat');
+        const platformXiaohongshu = document.getElementById('platform-xiaohongshu');
+        
+        function resetAllPlatforms() {
+            platformDouyin.classList.remove('active', 'border-red-500', 'bg-red-50');
+            platformDouyin.classList.add('border-gray-200', 'bg-gray-50');
+            platformDouyin.querySelector('i').classList.remove('text-red-500');
+            platformDouyin.querySelector('i').classList.add('text-gray-500');
+            platformDouyin.querySelector('p').classList.remove('text-red-600');
+            platformDouyin.querySelector('p').classList.add('text-gray-600');
+            
+            platformWechat.classList.remove('active', 'border-red-500', 'bg-red-50');
+            platformWechat.classList.add('border-gray-200', 'bg-gray-50');
+            platformWechat.querySelector('i').classList.remove('text-red-500');
+            platformWechat.querySelector('i').classList.add('text-gray-500');
+            platformWechat.querySelector('p').classList.remove('text-red-600');
+            platformWechat.querySelector('p').classList.add('text-gray-600');
+            
+            platformXiaohongshu.classList.remove('active', 'border-red-500', 'bg-red-50');
+            platformXiaohongshu.classList.add('border-gray-200', 'bg-gray-50');
+            platformXiaohongshu.querySelector('i').classList.remove('text-red-500');
+            platformXiaohongshu.querySelector('i').classList.add('text-gray-500');
+            platformXiaohongshu.querySelector('p').classList.remove('text-red-600');
+            platformXiaohongshu.querySelector('p').classList.add('text-gray-600');
+        }
+        
+        function activatePlatform(platform) {
+            resetAllPlatforms();
+            platform.classList.remove('border-gray-200', 'bg-gray-50');
+            platform.classList.add('active', 'border-red-500', 'bg-red-50');
+            platform.querySelector('i').classList.remove('text-gray-500');
+            platform.querySelector('i').classList.add('text-red-500');
+            platform.querySelector('p').classList.remove('text-gray-600');
+            platform.querySelector('p').classList.add('text-red-600');
+        }
+        
+        platformDouyin.addEventListener('click', function() {
+            activatePlatform(platformDouyin);
+            sessionStorage.setItem('selectedPlatform', 'douyin');
+        });
+        
+        platformWechat.addEventListener('click', function() {
+            showAlert('微信视频功能开发中，敬请期待！');
+            sessionStorage.setItem('selectedPlatform', 'wechat');
+        });
+        
+        platformXiaohongshu.addEventListener('click', function() {
+            showAlert('小红书视频功能开发中，敬请期待！');
+            sessionStorage.setItem('selectedPlatform', 'xiaohongshu');
+        });
+        
+        // 模式选择
+        const modeCreate = document.getElementById('mode-create');
+        const modeRewrite = document.getElementById('mode-rewrite');
+        const modeDigital = document.getElementById('mode-digital');
+        
+        function resetAllModes() {
+            modeCreate.classList.remove('active', 'border-red-500', 'bg-red-50');
+            modeCreate.classList.add('border-gray-200', 'bg-gray-50');
+            modeCreate.querySelector('i').classList.remove('text-red-500');
+            modeCreate.querySelector('i').classList.add('text-gray-500');
+            modeCreate.querySelector('p:first-of-type').classList.remove('text-red-600');
+            modeCreate.querySelector('p:first-of-type').classList.add('text-gray-600');
+            modeCreate.querySelector('p:last-of-type').classList.remove('text-red-400');
+            modeCreate.querySelector('p:last-of-type').classList.add('text-gray-400');
+            
+            modeRewrite.classList.remove('active', 'border-red-500', 'bg-red-50');
+            modeRewrite.classList.add('border-gray-200', 'bg-gray-50');
+            modeRewrite.querySelector('i').classList.remove('text-red-500');
+            modeRewrite.querySelector('i').classList.add('text-gray-500');
+            modeRewrite.querySelector('p:first-of-type').classList.remove('text-red-600');
+            modeRewrite.querySelector('p:first-of-type').classList.add('text-gray-600');
+            modeRewrite.querySelector('p:last-of-type').classList.remove('text-red-400');
+            modeRewrite.querySelector('p:last-of-type').classList.add('text-gray-400');
+            
+            modeDigital.classList.remove('active', 'border-red-500', 'bg-red-50');
+            modeDigital.classList.add('border-gray-200', 'bg-gray-50');
+            modeDigital.querySelector('i').classList.remove('text-red-500');
+            modeDigital.querySelector('i').classList.add('text-gray-500');
+            modeDigital.querySelector('p:first-of-type').classList.remove('text-red-600');
+            modeDigital.querySelector('p:first-of-type').classList.add('text-gray-600');
+            modeDigital.querySelector('p:last-of-type').classList.remove('text-red-400');
+            modeDigital.querySelector('p:last-of-type').classList.add('text-gray-400');
+        }
+        
+        function activateMode(mode) {
+            resetAllModes();
+            mode.classList.remove('border-gray-200', 'bg-gray-50');
+            mode.classList.add('active', 'border-red-500', 'bg-red-50');
+            mode.querySelector('i').classList.remove('text-gray-500');
+            mode.querySelector('i').classList.add('text-red-500');
+            mode.querySelector('p:first-of-type').classList.remove('text-gray-600');
+            mode.querySelector('p:first-of-type').classList.add('text-red-600');
+            mode.querySelector('p:last-of-type').classList.remove('text-gray-400');
+            mode.querySelector('p:last-of-type').classList.add('text-red-400');
+        }
+        
+        modeCreate.addEventListener('click', function() {
+            resetAllModes();
+            activateMode(modeCreate);
+            sessionStorage.setItem('selectedMode', 'create');
+            // 短暂停后跳转到下一页
+            setTimeout(function() {
+                window.location.href = 'input.html';
+            }, 300);
+        });
+        
+        modeRewrite.addEventListener('click', function() {
+            resetAllModes();
+            activateMode(modeRewrite);
+            sessionStorage.setItem('selectedMode', 'rewrite');
+            // 短暂停后跳转到下一页
+            setTimeout(function() {
+                window.location.href = 'input.html';
+            }, 300);
+        });
+        
+        modeDigital.addEventListener('click', function() {
+            resetAllModes();
+            activateMode(modeDigital);
+            sessionStorage.setItem('selectedMode', 'digital');
+            // 短暂停后跳转到下一页
+            setTimeout(function() {
+                window.location.href = 'input.html';
+            }, 300);
+        });
+        
+        // 初始化选中状态
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置默认选中
+            activatePlatform(platformDouyin);
+            activateMode(modeCreate);
+            sessionStorage.setItem('selectedPlatform', 'douyin');
+            sessionStorage.setItem('selectedMode', 'create');
+        });
+        
+        // 显示警告提示
+        function showAlert(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert';
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+            
+            // 2秒后自动移除提示
+            setTimeout(() => {
+                document.body.removeChild(alertDiv);
+            }, 2000);
+        }
+        
+        // 初始化时设置默认平台
+        // 默认选择抖音平台
+        sessionStorage.setItem('selectedPlatform', 'douyin');
+    </script>
+</body>
+</html>

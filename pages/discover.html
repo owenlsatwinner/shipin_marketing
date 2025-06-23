@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发现 - 视频创作助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F2F2F7;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .search-bar {
+            position: sticky;
+            top: 0;
+            background-color: white;
+            padding: 12px 16px;
+            z-index: 100;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 16px;
+            padding-left: 40px;
+            background-color: #F2F2F7;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8E8E93;
+        }
+        
+        .discover-content {
+            padding: 16px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .see-all {
+            font-size: 14px;
+            color: #FF427F;
+            font-weight: 500;
+        }
+        
+        .trending-topics {
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            gap: 12px;
+            padding-bottom: 16px;
+        }
+        
+        .trending-topics::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .topic-card {
+            flex: 0 0 auto;
+            width: 120px;
+            height: 160px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .topic-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .topic-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            padding: 10px;
+        }
+        
+        .topic-name {
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        
+        .topic-count {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+        }
+        
+        .creator-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .creator-card {
+            width: calc(50% - 8px);
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .creator-cover {
+            height: 80px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .creator-info {
+            padding: 12px;
+            position: relative;
+        }
+        
+        .creator-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: -25px;
+            left: 12px;
+        }
+        
+        .creator-name {
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 4px;
+        }
+        
+        .creator-details {
+            font-size: 12px;
+            color: #8E8E93;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .followed-by {
+            font-size: 12px;
+            color: #8E8E93;
+        }
+        
+        .followed-avatars {
+            display: flex;
+            margin-top: 4px;
+        }
+        
+        .followed-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid white;
+            margin-right: -6px;
+        }
+        
+        .follow-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #FF427F, #FF9B6A);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .discover-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        
+        .tag {
+            padding: 8px 16px;
+            background-color: white;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tag.active {
+            background: linear-gradient(135deg, #FF427F, #FF9B6A);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-bar">
+        <div class="relative">
+            <input type="text" class="search-input" placeholder="搜索创作者、话题、技巧…">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+    </div>
+    
+    <div class="discover-content">
+        <div class="section-title">
+            热门话题
+            <span class="see-all">查看全部</span>
+        </div>
+        
+        <div class="trending-topics">
+            <div class="topic-card">
+                <img src="https://images.unsplash.com/photo-1539635278303-d4002c07eae3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="topic-image">
+                <div class="topic-overlay">
+                    <div class="topic-name">短视频创意</div>
+                    <div class="topic-count">3.2万视频</div>
+                </div>
+            </div>
+            
+            <div class="topic-card">
+                <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="topic-image">
+                <div class="topic-overlay">
+                    <div class="topic-name">Vlog技巧</div>
+                    <div class="topic-count">1.4万视频</div>
+                </div>
+            </div>
+            
+            <div class="topic-card">
+                <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="topic-image">
+                <div class="topic-overlay">
+                    <div class="topic-name">特效教程</div>
+                    <div class="topic-count">5.7万视频</div>
+                </div>
+            </div>
+            
+            <div class="topic-card">
+                <img src="https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="topic-image">
+                <div class="topic-overlay">
+                    <div class="topic-name">剪辑大赛</div>
+                    <div class="topic-count">2.1万视频</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-title mt-6">
+            推荐创作者
+            <span class="see-all">查看全部</span>
+        </div>
+        
+        <div class="creator-row">
+            <div class="creator-card">
+                <div class="creator-cover" style="background-image: url('https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                <div class="creator-info">
+                    <div class="creator-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/28.jpg');"></div>
+                    <div class="creator-name">电影质感剪辑</div>
+                    <div class="creator-details">
+                        <span>1.2M粉丝</span>
+                        <span>•</span>
+                        <span>342视频</span>
+                    </div>
+                    <div class="followed-by">张艺谋等5位朋友关注</div>
+                    <div class="followed-avatars">
+                        <div class="followed-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/86.jpg');"></div>
+                        <div class="followed-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/32.jpg');"></div>
+                        <div class="followed-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/42.jpg');"></div>
+                    </div>
+                    <div class="follow-btn">关注</div>
+                </div>
+            </div>
+            
+            <div class="creator-card">
+                <div class="creator-cover" style="background-image: url('https://images.unsplash.com/photo-1569937756447-1d44f657dc69?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                <div class="creator-info">
+                    <div class="creator-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/33.jpg');"></div>
+                    <div class="creator-name">特效女王</div>
+                    <div class="creator-details">
+                        <span>865K粉丝</span>
+                        <span>•</span>
+                        <span>217视频</span>
+                    </div>
+                    <div class="followed-by">王家卫等3位朋友关注</div>
+                    <div class="followed-avatars">
+                        <div class="followed-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/22.jpg');"></div>
+                        <div class="followed-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/56.jpg');"></div>
+                    </div>
+                    <div class="follow-btn">关注</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-title mt-4">
+            探索热门标签
+        </div>
+        
+        <div class="discover-tags">
+            <div class="tag active">全部</div>
+            <div class="tag">拍摄</div>
+            <div class="tag">剪辑</div>
+            <div class="tag">配乐</div>
+            <div class="tag">特效</div>
+            <div class="tag">构图</div>
+            <div class="tag">灯光</div>
+            <div class="tag">运镜</div>
+            <div class="tag">叙事</div>
+            <div class="tag">调色</div>
+            <div class="tag">设备</div>
+        </div>
+    </div>
+    
+    <script>
+        // 标签切换效果
+        const tags = document.querySelectorAll('.tag');
+        tags.forEach(tag => {
+            tag.addEventListener('click', () => {
+                tags.forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+            });
+        });
+        
+        // 话题卡片点击跳转
+        const topicCards = document.querySelectorAll('.topic-card');
+        topicCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // 跳转到话题详情页面
+                console.log('跳转到话题详情');
+            });
+        });
+        
+        // 关注按钮点击效果
+        const followBtns = document.querySelectorAll('.follow-btn');
+        followBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (btn.textContent === '关注') {
+                    btn.textContent = '已关注';
+                    btn.style.background = '#E5E5EA';
+                    btn.style.color = '#8E8E93';
+                } else {
+                    btn.textContent = '关注';
+                    btn.style.background = 'linear-gradient(135deg, #FF427F, #FF9B6A)';
+                    btn.style.color = 'white';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

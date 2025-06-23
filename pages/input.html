@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创作需求输入</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f8f8;
+            max-width: 390px;
+            margin: 0 auto;
+            height: 844px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 40px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .status-bar {
+            background-color: #000;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #ff4d4d, #f9333f);
+            border: none;
+            -webkit-tap-highlight-color: transparent; /* 消除移动设备上的点击高亮 */
+        }
+        
+        .btn-primary:active {
+            background: linear-gradient(to right, #e64646, #e02e39);
+        }
+        
+        /* 添加按钮活跃状态的样式 */
+        .btn-active {
+            opacity: 0.9;
+        }
+        
+        /* 移除hover效果 */
+        .app-container {
+            background-color: white;
+            height: calc(100% - 120px);
+            overflow-y: auto;
+        }
+        .form-group input, .form-group textarea {
+            border: 1px solid #e2e8f0;
+            background-color: #f9fafc;
+        }
+        .form-group label {
+            font-weight: 500;
+            color: #374151;
+        }
+        .nav-footer {
+            padding: 12px 0;
+            background-color: white;
+            border-top: 1px solid #e2e8f0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 390px;
+            margin: 0 auto;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+        }
+        .nav-item.active i {
+            color: #f9333f;
+        }
+        .nav-item.active span {
+            color: #f9333f;
+        }
+        
+        .fixed-button {
+            position: fixed;
+            bottom: 120px; /* 提高按钮位置，避免与底部导航重叠 */
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: calc(100% - 1.5rem * 2); /* 与app-container的内边距p-3(0.75rem)保持一致 */
+            max-width: none; /* 移除最大宽度限制，与表单宽度保持一致 */
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(249, 51, 63, 0.2), 0 2px 8px rgba(249, 51, 63, 0.15); /* 红色阴影提升视觉效果 */
+            transition: all 0.25s ease; /* 平滑过渡效果 */
+            border-radius: 12px; /* 确保圆角一致 */
+            padding: 14px 0; /* 调整垂直内边距 */
+            transform: translateY(0); /* 为悬浮效果做准备 */
+        }
+        
+        .fixed-button:hover {
+            transform: translateY(-3px); /* 悬停时上浮效果 */
+            box-shadow: 0 15px 30px rgba(249, 51, 63, 0.25), 0 5px 10px rgba(249, 51, 63, 0.15); /* 增强阴影 */
+        }
+        
+        .fixed-button:active {
+            transform: translateY(1px); /* 点击时轻微下沉 */
+            box-shadow: 0 8px 15px rgba(249, 51, 63, 0.2), 0 2px 5px rgba(249, 51, 63, 0.1); /* 减小阴影 */
+            opacity: 0.9; /* 略微降低不透明度 */
+        }
+        .app-container {
+            padding-bottom: 120px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="left">
+            <span id="current-time">22:09</span>
+        </div>
+        <div class="right">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi ml-2"></i>
+            <i class="fas fa-battery-full ml-2"></i>
+        </div>
+    </div>
+    
+    <!-- 应用导航栏 -->
+    <div class="bg-gradient-to-r from-red-500 to-pink-500 p-4 flex items-center justify-between shadow-md rounded-b-lg">
+        <div class="flex items-center">
+            <a href="landing.html" class="mr-3 text-white"><i class="fas fa-arrow-left"></i></a>
+            <i class="fas fa-video text-white mr-2 text-xl"></i>
+            <div class="text-xl font-bold text-white">创作需求输入</div>
+        </div>
+        <div></div>
+    </div>
+    
+    <!-- 主要内容区域 -->
+    <div class="app-container p-3 pb-20">
+        <!-- 平台和模式信息 -->
+        <div class="bg-blue-50 rounded-lg p-3 mb-4 border border-blue-100">
+            <h2 class="text-lg font-medium text-center text-gray-800 mb-1">请填写创作需求</h2>
+            <p class="text-sm text-blue-700 text-center"><i class="fas fa-info-circle mr-1"></i> <span id="platform-mode-display">抖音视频 - 原创营销获客</span></p>
+        </div>
+        
+        <!-- 表单部分 -->
+        <form id="creationForm" class="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+            <!-- 链接输入框 (默认隐藏) -->
+            <div id="link-input-section" class="form-group mb-5" style="display: none;">
+                <label class="block mb-2 font-medium text-gray-700">内容链接</label>
+                <input type="url" class="w-full p-3 rounded-lg" placeholder="粘贴抖音、小红书等平台的内容链接" id="contentLink">
+                <p class="text-xs text-gray-500 mt-1">系统将智能分析链接内容，一键改写并生成视频</p>
+            </div>
+            
+            <!-- 原创内容表单 -->
+            <div id="original-content-section">
+                <div class="form-group mb-5">
+                    <label class="block mb-2 font-medium text-gray-700">推广关键词</label>
+                    <input type="text" id="keywords" class="w-full p-3 rounded-lg" placeholder="输入您想推广的产品关键词" required>
+                    <p class="text-xs text-gray-500 mt-1">例如：新款手机壳、减肥茶、防晒霜等</p>
+                </div>
+                
+                <div class="form-group mb-5">
+                    <label class="block mb-2 font-medium text-gray-700">产品卖点</label>
+                    <textarea id="selling-points" class="w-full p-3 rounded-lg" rows="4" placeholder="输入您的产品主要卖点和优势" required></textarea>
+                    <p class="text-xs text-gray-500 mt-1">描述越详细，生成的内容越精准</p>
+                </div>
+            </div>
+            
+            <div class="form-group mb-5">
+                <label class="block mb-2 font-medium text-gray-700">素材选择</label>
+                <div class="border border-dashed border-gray-300 rounded-lg p-4 text-center" id="materialUpload">
+                    <i class="fas fa-video text-blue-400 text-3xl mb-2"></i>
+                    <p class="text-gray-700 mb-1">系统将使用相册中前三个视频内容</p>
+                    <p class="text-xs text-gray-500">无需上传，自动获取相册中最近的视频素材</p>
+                </div>
+            </div>
+            
+
+            
+            <div class="pb-32"></div> <!-- 增加更多底部空白，确保滑动时内容不被按钮遮挡 -->
+        </form>
+    </div>
+    
+    <!-- 底部导航 -->
+    <div class="nav-footer" style="display: flex; justify-content: space-around;">
+        <div class="nav-item" style="text-align: center; width: 50%;">
+            <a href="landing.html" class="block">
+                <i class="fas fa-home text-xl text-gray-400"></i><br>
+                <span class="text-xs text-gray-400">首页</span>
+            </a>
+        </div>
+        <div class="nav-item" style="text-align: center; width: 50%;">
+            <a href="data-center.html" class="block">
+                <i class="fas fa-chart-bar text-xl text-gray-400"></i><br>
+                <span class="text-xs text-gray-400">数据</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 固定在底部的按钮 -->
+    <button id="startButton" type="button" class="btn-primary text-white py-4 rounded-lg font-medium text-lg focus:outline-none fixed-button">
+        开始创作
+    </button>
+    
+    <!-- 自动提交提示 -->
+    <div id="autoSubmitNotice" class="fixed bottom-28 left-0 right-0 bg-green-100 text-green-800 text-center py-2 text-sm rounded-lg mx-4 shadow-md" style="display: none;">
+        <i class="fas fa-check-circle mr-1"></i> 正在自动创作中...
+    </div>
+
+    <script>
+        // 显示当前时间
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('current-time').textContent = `${hours}:${minutes}`;
+        }
+        
+        updateTime();
+        setInterval(updateTime, 60000);
+        
+        // 获取从上一页传递过来的平台和模式信息
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedPlatform = sessionStorage.getItem('selectedPlatform') || 'douyin';
+            const selectedMode = sessionStorage.getItem('selectedMode') || 'create';
+            
+            // 根据选择的平台和模式显示不同的UI
+            let platformText = '抖音视频';
+            if (selectedPlatform === 'wechat') platformText = '微信视频号';
+            if (selectedPlatform === 'xiaohongshu') platformText = '小红书';
+            
+            let modeText = '原创营销获客';
+            const linkInputSection = document.getElementById('link-input-section');
+            const originalContentSection = document.getElementById('original-content-section');
+            const contentLinkInput = document.getElementById('contentLink');
+            const originalInputs = originalContentSection.querySelectorAll('input, textarea');
+
+            if (selectedMode === 'rewrite') {
+                modeText = '热门营销获客';
+                linkInputSection.style.display = 'block';
+                contentLinkInput.disabled = false;
+                originalContentSection.style.display = 'none';
+                originalInputs.forEach(el => el.disabled = true);
+            } else {
+                modeText = (selectedMode === 'digital') ? '数字人获客' : '原创营销获客';
+                linkInputSection.style.display = 'none';
+                contentLinkInput.disabled = true;
+                originalContentSection.style.display = 'block';
+                originalInputs.forEach(el => el.disabled = false);
+            }
+            
+            // 更新显示的平台和模式信息
+            document.getElementById('platform-mode-display').textContent = `${platformText} - ${modeText}`;
+            
+            // 如果用户已经填写了关键词或卖点，自动触发创作按钮
+            // 添加延时以确保用户看到表单
+            setTimeout(function() {
+                // 检查是否有关键词或卖点输入
+                const keywordsInput = document.getElementById('keywords');
+                const sellingPointsInput = document.getElementById('selling-points');
+                
+                if ((keywordsInput && !keywordsInput.disabled && keywordsInput.value.trim() !== '') || 
+                    (sellingPointsInput && !sellingPointsInput.disabled && sellingPointsInput.value.trim() !== '')) {
+                    // 显示自动提交提示
+                    document.getElementById('autoSubmitNotice').style.display = 'block';
+                    
+                    // 1秒后自动点击开始创作按钮
+                    setTimeout(function() {
+                        document.getElementById('startButton').click();
+                    }, 1000);
+                }
+            }, 1500);
+        });
+        
+        // 素材选择区域无需特殊处理，已改为仅显示提示信息
+        // 系统将自动使用相册中前三个视频内容
+
+        document.getElementById('startButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            // 添加点击视觉反馈
+            this.classList.add('btn-active');
+            setTimeout(() => {
+                this.classList.remove('btn-active');
+            }, 200);
+            
+            // 获取是否为链接改写模式
+            const isRewriteMode = modeRewrite.classList.contains('active');
+            
+            // 获取选中的平台
+            let selectedPlatform = '';
+            if (platformDouyin.classList.contains('active')) {
+                selectedPlatform = '抖音';
+            } else if (platformWechat.classList.contains('active')) {
+                selectedPlatform = '微信视频号';
+            } else if (platformXiaohongshu.classList.contains('active')) {
+                selectedPlatform = '小红书';
+            }
+            
+            // 获取创作模式
+            let creationMode = '';
+            if (modeCreate.classList.contains('active')) {
+                creationMode = '原创营销获客';
+            } else if (modeRewrite.classList.contains('active')) {
+                creationMode = '热门营销获客';
+            } else if (modeDigital.classList.contains('active')) {
+                creationMode = '数字人获客';
+            }
+            
+            if (isRewriteMode) {
+                // 链接模式验证
+                const linkValue = document.getElementById('contentLink').value;
+                if (linkValue.trim() === '') {
+                    alert('请输入有效的内容链接');
+                    return;
+                }
+                // 跳转到创建页面
+                console.log('发布到平台：' + selectedPlatform);
+                parent.location.hash = 'creating';
+            } else {
+                // 原创模式验证
+                if (form.checkValidity()) {
+                    // 跳转到创建页面
+                    console.log('发布到平台：' + selectedPlatform);
+                    parent.location.hash = 'creating';
+                } else {
+                    alert('请填写所有必填字段');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

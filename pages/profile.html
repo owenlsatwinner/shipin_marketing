@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人主页 - 视频创作助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F2F2F7;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, #FF427F, #FF9B6A);
+            padding: 20px 16px 80px;
+            position: relative;
+        }
+        
+        .header-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 16px;
+        }
+        
+        .action-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            color: white;
+            margin-left: 12px;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+            background-size: cover;
+            background-position: center;
+            margin-right: 16px;
+        }
+        
+        .user-info {
+            color: white;
+        }
+        
+        .user-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .user-id {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .profile-stats {
+            display: flex;
+            color: white;
+            gap: 16px;
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .profile-content {
+            background-color: white;
+            border-radius: 20px 20px 0 0;
+            margin-top: -50px;
+            padding: 16px;
+            min-height: 500px;
+        }
+        
+        .profile-tabs {
+            display: flex;
+            border-bottom: 1px solid #E5E5EA;
+            margin-bottom: 20px;
+        }
+        
+        .profile-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            font-size: 15px;
+            font-weight: 500;
+            color: #8E8E93;
+            position: relative;
+        }
+        
+        .profile-tab.active {
+            color: #000;
+            font-weight: 600;
+        }
+        
+        .profile-tab.active::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background-color: #FF427F;
+            border-radius: 2px;
+        }
+        
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .work-item {
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 9/16;
+            background-color: #000;
+        }
+        
+        .work-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.9;
+        }
+        
+        .work-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            color: white;
+        }
+        
+        .work-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .work-stats {
+            display: flex;
+            font-size: 12px;
+            gap: 8px;
+        }
+        
+        .work-stat {
+            display: flex;
+            align-items: center;
+        }
+        
+        .work-stat i {
+            margin-right: 2px;
+            font-size: 10px;
+        }
+        
+        .draft-item {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 12px;
+            display: flex;
+        }
+        
+        .draft-thumbnail {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+        
+        .draft-info {
+            padding: 12px;
+            flex: 1;
+        }
+        
+        .draft-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .draft-date {
+            font-size: 13px;
+            color: #8E8E93;
+            margin-bottom: 8px;
+        }
+        
+        .draft-progress {
+            height: 4px;
+            background-color: #E5E5EA;
+            border-radius: 2px;
+            margin-bottom: 8px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #FF427F, #FF9B6A);
+            border-radius: 2px;
+            width: 60%;
+        }
+        
+        .draft-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .draft-action {
+            font-size: 13px;
+            color: #FF427F;
+            display: flex;
+            align-items: center;
+        }
+        
+        .draft-action i {
+            margin-right: 4px;
+        }
+        
+        .like-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #E5E5EA;
+        }
+        
+        .like-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            margin-right: 12px;
+            object-fit: cover;
+        }
+        
+        .like-info {
+            flex: 1;
+        }
+        
+        .like-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .like-creator {
+            font-size: 13px;
+            color: #8E8E93;
+            display: flex;
+            align-items: center;
+        }
+        
+        .like-creator img {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        
+        .like-icon {
+            color: #FF427F;
+            font-size: 20px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .edit-profile-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid white;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .edit-profile-btn i {
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-header">
+        <div class="header-actions">
+            <div class="action-icon">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <div class="action-icon">
+                <i class="fas fa-ellipsis-h"></i>
+            </div>
+        </div>
+        
+        <div class="user-profile">
+            <div class="user-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/29.jpg');"></div>
+            <div class="user-info">
+                <div class="user-name">创意视频达人</div>
+                <div class="user-id">ID: creative_video</div>
+                <button class="edit-profile-btn">
+                    <i class="fas fa-pencil-alt"></i>
+                    编辑资料
+                </button>
+            </div>
+        </div>
+        
+        <div class="profile-stats mt-6 ml-2">
+            <div class="stat">
+                <div class="stat-value">218</div>
+                <div class="stat-label">作品</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">12.5k</div>
+                <div class="stat-label">粉丝</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">356</div>
+                <div class="stat-label">关注</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="profile-content">
+        <div class="profile-tabs">
+            <div class="profile-tab active" data-tab="works">作品</div>
+            <div class="profile-tab" data-tab="drafts">草稿</div>
+            <div class="profile-tab" data-tab="likes">喜欢</div>
+        </div>
+        
+        <div id="works" class="tab-content active">
+            <div class="work-grid">
+                <div class="work-item">
+                    <img src="https://images.unsplash.com/photo-1514907283155-ea5f4094c70c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="work-thumbnail">
+                    <div class="work-info">
+                        <div class="work-title">城市日落慢动作大片</div>
+                        <div class="work-stats">
+                            <div class="work-stat">
+                                <i class="fas fa-play"></i>
+                                <span>2.4万</span>
+                            </div>
+                            <div class="work-stat">
+                                <i class="fas fa-heart"></i>
+                                <span>1.2k</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="work-item">
+                    <img src="https://images.unsplash.com/photo-1508186736123-44a5533f2649?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="work-thumbnail">
+                    <div class="work-info">
+                        <div class="work-title">星空延时摄影教程</div>
+                        <div class="work-stats">
+                            <div class="work-stat">
+                                <i class="fas fa-play"></i>
+                                <span>1.8万</span>
+                            </div>
+                            <div class="work-stat">
+                                <i class="fas fa-heart"></i>
+                                <span>946</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="work-item">
+                    <img src="https://images.unsplash.com/photo-1513346940221-6f673d962e97?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="work-thumbnail">
+                    <div class="work-info">
+                        <div class="work-title">平滑转场技巧分享</div>
+                        <div class="work-stats">
+                            <div class="work-stat">
+                                <i class="fas fa-play"></i>
+                                <span>4.5万</span>
+                            </div>
+                            <div class="work-stat">
+                                <i class="fas fa-heart"></i>
+                                <span>3.1k</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="work-item">
+                    <img src="https://images.unsplash.com/photo-1534470397273-a1d3f31a7268?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="work-thumbnail">
+                    <div class="work-info">
+                        <div class="work-title">电影感色调调色指南</div>
+                        <div class="work-stats">
+                            <div class="work-stat">
+                                <i class="fas fa-play"></i>
+                                <span>3.3万</span>
+                            </div>
+                            <div class="work-stat">
+                                <i class="fas fa-heart"></i>
+                                <span>2.8k</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="drafts" class="tab-content">
+            <div class="draft-item">
+                <img src="https://images.unsplash.com/photo-1465414829459-d228b58caf6e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="draft-thumbnail">
+                <div class="draft-info">
+                    <div class="draft-title">城市生活Vlog</div>
+                    <div class="draft-date">上次编辑：今天 10:35</div>
+                    <div class="draft-progress">
+                        <div class="progress-bar" style="width: 60%;"></div>
+                    </div>
+                    <div class="draft-actions">
+                        <div class="draft-action">
+                            <i class="fas fa-pencil-alt"></i>
+                            <span>继续编辑</span>
+                        </div>
+                        <div class="draft-action">
+                            <i class="fas fa-trash"></i>
+                            <span>删除</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="draft-item">
+                <img src="https://images.unsplash.com/photo-1546768292-fb12f6c92568?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="draft-thumbnail">
+                <div class="draft-info">
+                    <div class="draft-title">产品广告短片</div>
+                    <div class="draft-date">上次编辑：昨天 18:42</div>
+                    <div class="draft-progress">
+                        <div class="progress-bar" style="width: 85%;"></div>
+                    </div>
+                    <div class="draft-actions">
+                        <div class="draft-action">
+                            <i class="fas fa-pencil-alt"></i>
+                            <span>继续编辑</span>
+                        </div>
+                        <div class="draft-action">
+                            <i class="fas fa-trash"></i>
+                            <span>删除</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="draft-item">
+                <img src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="draft-thumbnail">
+                <div class="draft-info">
+                    <div class="draft-title">摄影技巧分享</div>
+                    <div class="draft-date">上次编辑：5月7日</div>
+                    <div class="draft-progress">
+                        <div class="progress-bar" style="width: 30%;"></div>
+                    </div>
+                    <div class="draft-actions">
+                        <div class="draft-action">
+                            <i class="fas fa-pencil-alt"></i>
+                            <span>继续编辑</span>
+                        </div>
+                        <div class="draft-action">
+                            <i class="fas fa-trash"></i>
+                            <span>删除</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="likes" class="tab-content">
+            <div class="like-item">
+                <img src="https://images.unsplash.com/photo-1461151304267-38535e780c79?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="like-thumbnail">
+                <div class="like-info">
+                    <div class="like-title">超强运镜技巧全解析</div>
+                    <div class="like-creator">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg">
+                        <span>摄影达人</span>
+                    </div>
+                </div>
+                <div class="like-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+            
+            <div class="like-item">
+                <img src="https://images.unsplash.com/photo-1540221652346-e5dd6b50f3e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="like-thumbnail">
+                <div class="like-info">
+                    <div class="like-title">10种创意过渡动画</div>
+                    <div class="like-creator">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg">
+                        <span>特效女王</span>
+                    </div>
+                </div>
+                <div class="like-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+            
+            <div class="like-item">
+                <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="like-thumbnail">
+                <div class="like-info">
+                    <div class="like-title">手机拍摄故事短片教程</div>
+                    <div class="like-creator">
+                        <img src="https://randomuser.me/api/portraits/men/85.jpg">
+                        <span>科技探索家</span>
+                    </div>
+                </div>
+                <div class="like-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+            
+            <div class="like-item">
+                <img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="like-thumbnail">
+                <div class="like-info">
+                    <div class="like-title">自然光摄影指南</div>
+                    <div class="like-creator">
+                        <img src="https://randomuser.me/api/portraits/women/33.jpg">
+                        <span>自然摄影师</span>
+                    </div>
+                </div>
+                <div class="like-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 选项卡切换
+        const tabs = document.querySelectorAll('.profile-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有活动状态
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // 设置当前选项卡为活动状态
+                tab.classList.add('active');
+                
+                // 显示对应的内容
+                const tabName = tab.getAttribute('data-tab');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+        
+        // 作品点击事件
+        const workItems = document.querySelectorAll('.work-item');
+        workItems.forEach(item => {
+            item.addEventListener('click', () => {
+                window.location.href = 'video-detail.html';
+            });
+        });
+        
+        // 草稿编辑操作
+        const draftActions = document.querySelectorAll('.draft-action');
+        draftActions.forEach(action => {
+            action.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const actionType = action.textContent.trim();
+                const draftTitle = action.closest('.draft-item').querySelector('.draft-title').textContent;
+                
+                if (actionType === '继续编辑') {
+                    console.log('继续编辑草稿:', draftTitle);
+                    window.location.href = 'ai-assistant.html';
+                } else if (actionType === '删除') {
+                    console.log('删除草稿:', draftTitle);
+                    action.closest('.draft-item').style.display = 'none';
+                }
+            });
+        });
+        
+        // 喜欢的视频点击
+        const likeItems = document.querySelectorAll('.like-item');
+        likeItems.forEach(item => {
+            item.addEventListener('click', () => {
+                window.location.href = 'video-detail.html';
+            });
+        });
+    </script>
+</body>
+</html>

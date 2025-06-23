@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI助手 - 视频创作助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F2F2F7;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .ai-header {
+            padding: 16px;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        .back-button {
+            color: #FF427F;
+            font-size: 18px;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .ai-container {
+            padding: 16px;
+        }
+        
+        .chat-interface {
+            background-color: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+        
+        .ai-suggestions {
+            margin-bottom: 16px;
+        }
+        
+        .ai-suggestion-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #8E8E93;
+        }
+        
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .suggestion-chip {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(255, 66, 127, 0.1), rgba(255, 155, 106, 0.1));
+            border: 1px solid rgba(255, 66, 127, 0.2);
+            border-radius: 100px;
+            font-size: 14px;
+            color: #FF427F;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .suggestion-chip:hover {
+            background: linear-gradient(135deg, rgba(255, 66, 127, 0.2), rgba(255, 155, 106, 0.2));
+        }
+        
+        .chat-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #E5E5EA;
+            border-radius: 100px;
+            padding: 8px 16px;
+        }
+        
+        .input-field {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            padding: 8px 0;
+        }
+        
+        .send-button {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #FF427F, #FF9B6A);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .creative-tools {
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        
+        .tool-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tool-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #FF427F, #FF9B6A);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .tool-name {
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .creative-inspiration {
+            margin-bottom: 24px;
+        }
+        
+        .inspiration-cards {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .inspiration-cards::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .inspiration-card {
+            flex: 0 0 auto;
+            width: 220px;
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .inspiration-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+        
+        .inspiration-info {
+            padding: 12px;
+        }
+        
+        .inspiration-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .inspiration-desc {
+            font-size: 13px;
+            color: #8E8E93;
+            line-height: 1.3;
+        }
+        
+        .chat-messages {
+            margin-bottom: 16px;
+            min-height: 50px;
+        }
+        
+        .message {
+            margin-bottom: 12px;
+        }
+        
+        .message-user {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .message-ai {
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .message-bubble-user {
+            background: linear-gradient(135deg, #FF427F, #FF9B6A);
+            color: white;
+            border-radius: 18px 18px 4px 18px;
+            padding: 10px 14px;
+            max-width: 80%;
+            font-size: 15px;
+        }
+        
+        .ai-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #5F5CFF, #9D94FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 8px;
+        }
+        
+        .message-bubble-ai {
+            background-color: #E5E5EA;
+            color: #000;
+            border-radius: 18px 18px 18px 4px;
+            padding: 10px 14px;
+            max-width: 80%;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="ai-header">
+        <i class="fas fa-chevron-left back-button" onclick="history.back()"></i>
+        <div class="header-title">AI创作助手</div>
+        <i class="fas fa-ellipsis-h text-gray-600"></i>
+    </div>
+    
+    <div class="ai-container">
+        <div class="chat-interface">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message message-ai">
+                    <div class="ai-avatar">
+                        <i class="fas fa-robot text-sm"></i>
+                    </div>
+                    <div class="message-bubble-ai">
+                        嗨，我是你的AI创作助手！我能帮你提供创意灵感、改进脚本，甚至生成完整的创作方案。请告诉我你的需求吧！
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ai-suggestions">
+                <div class="ai-suggestion-title">试试这些</div>
+                <div class="suggestion-chips">
+                    <div class="suggestion-chip" onclick="addUserMessage('帮我生成一个旅行Vlog脚本')">帮我生成一个旅行Vlog脚本</div>
+                    <div class="suggestion-chip" onclick="addUserMessage('如何拍摄电影感十足的画面')">如何拍摄电影感十足的画面</div>
+                    <div class="suggestion-chip" onclick="addUserMessage('推荐几种适合产品展示的转场特效')">推荐几种适合产品展示的转场特效</div>
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <input type="text" class="input-field" id="userInput" placeholder="输入你的问题...">
+                <div class="send-button" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane text-sm"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="creative-tools">
+            <div class="section-title">创作工具</div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <div class="tool-name">一键生成</div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-photo-film"></i>
+                    </div>
+                    <div class="tool-name">故事板</div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-pen-to-square"></i>
+                    </div>
+                    <div class="tool-name">脚本助手</div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div class="tool-name">智能美化</div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div class="tool-name">配乐推荐</div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="tool-name">流量分析</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="creative-inspiration">
+            <div class="section-title">创意灵感</div>
+            <div class="inspiration-cards">
+                <div class="inspiration-card">
+                    <img src="https://images.unsplash.com/photo-1516329901642-8ea3563a1d5e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="inspiration-image">
+                    <div class="inspiration-info">
+                        <div class="inspiration-title">时下流行拍摄风格</div>
+                        <div class="inspiration-desc">了解当前最受欢迎的视频风格和拍摄技巧</div>
+                    </div>
+                </div>
+                
+                <div class="inspiration-card">
+                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="inspiration-image">
+                    <div class="inspiration-info">
+                        <div class="inspiration-title">创意过渡效果合集</div>
+                        <div class="inspiration-desc">10种能让你视频脱颖而出的独特转场效果</div>
+                    </div>
+                </div>
+                
+                <div class="inspiration-card">
+                    <img src="https://images.unsplash.com/photo-1535016120720-40c646be5580?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="inspiration-image">
+                    <div class="inspiration-info">
+                        <div class="inspiration-title">10个爆款内容创意</div>
+                        <div class="inspiration-desc">这些主题正在获得大量观看和互动</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 用户输入处理
+        const userInput = document.getElementById('userInput');
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // 发送消息函数
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message !== '') {
+                addUserMessage(message);
+                userInput.value = '';
+                
+                // 模拟AI回复
+                setTimeout(() => {
+                    let aiResponse = '';
+                    
+                    if (message.includes('旅行') || message.includes('Vlog')) {
+                        aiResponse = '旅行Vlog的脚本可以包括以下环节：<br>1. 引人入胜的开场（地标或当地特色）<br>2. 自我介绍和旅行目的<br>3. 当地美食探索<br>4. 景点游览和有趣体验<br>5. 当地人文风情<br>6. 日落和夜景拍摄<br>7. 总结和下一站预告<br><br>需要我为某个具体目的地生成更详细的脚本吗？';
+                    } else if (message.includes('电影感')) {
+                        aiResponse = '要拍摄电影感十足的画面，您可以：<br>1. 使用24fps帧率<br>2. 尝试2.35:1宽屏比例<br>3. 应用电影级LUT调色<br>4. 使用慢速推轨或平稳的云台运动<br>5. 注意光线的质感和方向性<br>6. 利用前景和景深<br>7. 运用电影构图法则<br>8. 使用人工烟雾创造氛围<br><br>您想了解其中哪一点的更多细节？';
+                    } else if (message.includes('特效') || message.includes('转场')) {
+                        aiResponse = '适合产品展示的转场特效有：<br>1. 旋转缩放过渡<br>2. 光线泄漏转场<br>3. 滑动无缝转场<br>4. 物体遮挡转场<br>5. 形状蒙版转换<br>6. 快速推拉变焦<br>7. 光效闪烁过渡<br>8. 3D旋转展示<br><br>我可以详细解释如何制作这些效果，您对哪个特别感兴趣？';
+                    } else {
+                        aiResponse = '感谢您的问题！我可以帮助您提供创意建议、拍摄技巧、编辑方法或任何与视频制作相关的指导。请告诉我更多关于您项目的细节，这样我能提供更有针对性的帮助。';
+                    }
+                    
+                    addAIMessage(aiResponse);
+                }, 1000);
+            }
+        }
+        
+        // 添加用户消息
+        function addUserMessage(message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message message-user';
+            messageElement.innerHTML = `
+                <div class="message-bubble-user">
+                    ${message}
+                </div>
+            `;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // 添加AI消息
+        function addAIMessage(message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message message-ai';
+            messageElement.innerHTML = `
+                <div class="ai-avatar">
+                    <i class="fas fa-robot text-sm"></i>
+                </div>
+                <div class="message-bubble-ai">
+                    ${message}
+                </div>
+            `;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // 工具卡片点击
+        const toolCards = document.querySelectorAll('.tool-card');
+        toolCards.forEach((card, index) => {
+            card.addEventListener('click', () => {
+                const toolNames = ['一键生成', '故事板', '脚本助手', '智能美化', '配乐推荐', '流量分析'];
+                addUserMessage(`我想使用${toolNames[index]}工具`);
+            });
+        });
+        
+        // 灵感卡片点击
+        const inspirationCards = document.querySelectorAll('.inspiration-card');
+        inspirationCards.forEach((card, index) => {
+            card.addEventListener('click', () => {
+                const titles = document.querySelectorAll('.inspiration-title');
+                addUserMessage(`告诉我关于"${titles[index].textContent}"的详情`);
+            });
+        });
+    </script>
+</body>
+</html>

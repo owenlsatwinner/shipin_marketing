@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频创作中</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f8f8;
+            max-width: 390px;
+            margin: 0 auto;
+            height: 844px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 40px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .status-bar {
+            background-color: #000;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+        }
+        .app-container {
+            background-color: white;
+            height: calc(100% - 120px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .loader {
+            width: 100px;
+            height: 100px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #FF4D67;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .countdown {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #FF4D67;
+        }
+        .creating-steps {
+            width: 80%;
+            margin-top: 2rem;
+        }
+        .step {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            background-color: #f9fafc;
+            display: flex;
+            align-items: center;
+        }
+        .step-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+        }
+        .step.active {
+            background-color: #FFF5F5;
+        }
+        .step.active .step-icon {
+            background-color: #FF4D67;
+            color: white;
+        }
+        .step.completed {
+            background-color: #F0FFF4;
+        }
+        .step.completed .step-icon {
+            background-color: #48BB78;
+            color: white;
+        }
+        .nav-footer {
+            text-align: center;
+            padding: 12px 0;
+            background-color: white;
+            border-top: 1px solid #e2e8f0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 390px;
+            margin: 0 auto;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="left">
+            <span>22:09</span>
+        </div>
+        <div class="right">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi ml-2"></i>
+            <i class="fas fa-battery-full ml-2"></i>
+        </div>
+    </div>
+    
+    <!-- 应用导航栏 -->
+    <div class="bg-white p-4 flex items-center justify-between shadow-sm">
+        <div class="text-xl font-bold text-gray-800">视频创作中</div>
+        <div class="text-gray-500"><i class="fas fa-ellipsis-v"></i></div>
+    </div>
+    
+    <!-- 主要内容区域 -->
+    <div class="app-container p-5">
+        <div class="loader mb-8"></div>
+        
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">AI正在创作您的视频</h2>
+            <p class="text-gray-500">预计完成时间</p>
+            <div class="countdown" id="countdown">02:00</div>
+        </div>
+        
+        <div class="creating-steps">
+            <div class="step completed">
+                <div class="step-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div>
+                    <div class="font-medium">分析关键词</div>
+                    <div class="text-sm text-gray-500">已完成</div>
+                </div>
+            </div>
+            
+            <div class="step active">
+                <div class="step-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <div>
+                    <div class="font-medium">生成视频内容</div>
+                    <div class="text-sm text-gray-500">处理中...</div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-icon">
+                    <i class="fas fa-music"></i>
+                </div>
+                <div>
+                    <div class="font-medium">添加背景音乐</div>
+                    <div class="text-sm text-gray-500">等待中</div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div>
+                    <div class="font-medium">发布到抖音</div>
+                    <div class="text-sm text-gray-500">等待中</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="nav-footer" style="display: flex; justify-content: space-around;">
+        <div class="nav-item" style="text-align: center; width: 50%;">
+            <a href="landing.html" class="block">
+                <i class="fas fa-home text-xl text-gray-400"></i><br>
+                <span class="text-xs text-gray-400">首页</span>
+            </a>
+        </div>
+        <div class="nav-item" style="text-align: center; width: 50%;">
+            <a href="data-center.html" class="block">
+                <i class="fas fa-chart-bar text-xl text-gray-400"></i><br>
+                <span class="text-xs text-gray-400">数据</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 计时器功能
+        let totalSeconds = 120; // 2分钟 = 120秒
+        const countdownEl = document.getElementById('countdown');
+        const steps = document.querySelectorAll('.step');
+        
+        const countdown = setInterval(function() {
+            totalSeconds--;
+            
+            // 更新显示时间
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            countdownEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // 根据剩余时间更新步骤状态
+            if (totalSeconds <= 90) { // 30秒后
+                steps[1].classList.remove('active');
+                steps[1].classList.add('completed');
+                steps[1].querySelector('.fas').classList.remove('fa-sync-alt');
+                steps[1].querySelector('.fas').classList.add('fa-check');
+                steps[1].querySelector('.text-sm').textContent = '已完成';
+                
+                steps[2].classList.add('active');
+                steps[2].querySelector('.fas').classList.add('fa-sync-alt');
+                steps[2].querySelector('.text-sm').textContent = '处理中...';
+            }
+            
+            if (totalSeconds <= 60) { // 60秒后
+                steps[2].classList.remove('active');
+                steps[2].classList.add('completed');
+                steps[2].querySelector('.fas').classList.remove('fa-sync-alt');
+                steps[2].querySelector('.fas').classList.add('fa-check');
+                steps[2].querySelector('.text-sm').textContent = '已完成';
+                
+                steps[3].classList.add('active');
+                steps[3].querySelector('.fas').classList.add('fa-sync-alt');
+                steps[3].querySelector('.fas').classList.remove('fa-cloud-upload-alt');
+                steps[3].querySelector('.text-sm').textContent = '处理中...';
+            }
+            
+            if (totalSeconds <= 0) {
+                clearInterval(countdown);
+                // 倒计时结束，跳转到完成页面
+                parent.location.hash = 'completed';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
